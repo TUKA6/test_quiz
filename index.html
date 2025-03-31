@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Sébastien Trivia</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { max-width: 500px; margin: auto; padding: 20px; }
+        .hidden { display: none; }
+        button { margin: 5px; padding: 10px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Sébastien Trivia</h1>
+        <div id="start-screen">
+            <button onclick="startQuiz()">Commencer</button>
+        </div>
+        <div id="quiz-screen" class="hidden">
+            <p id="question"></p>
+            <div id="choices"></div>
+        </div>
+        <div id="result-screen" class="hidden">
+            <h2>Résultat</h2>
+            <p id="score"></p>
+            <p>Meilleur score : <span id="high-score">0</span></p>
+            <button onclick="startQuiz()">Rejouer</button>
+        </div>
+    </div>
+    <script>
+        const questions = [
+            { question: "Quel est mon surnom le plus connu ?", choices: ["Seb", "Sébas", "Éva", "Bastien"], answer: "Sébas" },
+            { question: "Quel est mon plat préféré ?", choices: ["Poulet mayo", "Fufu & Pondu", "Riz sauce arachide", "Pizza"], answer: "Fufu & Pondu" },
+            { question: "Quel est mon signe astrologique ?", choices: ["Bélier", "Poisson", "Lion", "Balance"], answer: "Poisson" }
+        ];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById("start-screen").classList.add("hidden");
+            document.getElementById("result-screen").classList.add("hidden");
+            document.getElementById("quiz-screen").classList.remove("hidden");
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                endQuiz();
+                return;
+            }
+            const q = questions[currentQuestionIndex];
+            document.getElementById("question").textContent = q.question;
+            const choicesDiv = document.getElementById("choices");
+            choicesDiv.innerHTML = "";
+            q.choices.forEach(choice => {
+                const btn = document.createElement("button");
+                btn.textContent = choice;
+                btn.onclick = () => checkAnswer(choice);
+                choicesDiv.appendChild(btn);
+            });
+        }
+        
+        function checkAnswer(choice) {
+            if (choice === questions[currentQuestionIndex].answer) {
+                score++;
+            }
+            currentQuestionIndex++;
+            showQuestion();
+        }
+        
+        function endQuiz() {
+            document.getElementById("quiz-screen").classList.add("hidden");
+            document.getElementById("result-screen").classList.remove("hidden");
+            document.getElementById("score").textContent = `Votre score : ${score} / ${questions.length}`;
+            
+            let highScore = localStorage.getItem("highScore") || 0;
+            if (score > highScore) {
+                localStorage.setItem("highScore", score);
+                highScore = score;
+            }
+            document.getElementById("high-score").textContent = highScore;
+        }
+    </script>
+</body>
+</html>
